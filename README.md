@@ -113,6 +113,15 @@ During training, the script will occasionally save intermediate results into Ten
 ./flow --train --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights
 ```
 
+In that fork it is possible to load as well Darknet Original datasets. To do that you need to specify directory with labels for trainset (or .txt file with list of that labels).
+
+Example of run:
+```bash
+python3 flow --model cfg/navmii.cfg --train --dataset /home/wildchlamydia/CarsVideo/train_sliced_subframes/ --answers /home/wildchlamydia/CarsVideo/train_sliced_subframes/ --lr 0.001 --epoch 1 --batch 2 --save 50 --trainer adam
+```
+
+Feature is in alpha stage (made just for working :) )
+
 ### Camera demo
 
 ```bash
