@@ -1,0 +1,4 @@
+classes = 9
+train  = /home/wildchlamydia/CarsVideo/train.txt
+valid  = /home/wildchlamydia/CarsVideo/test.txt
+names = data/navmii.names

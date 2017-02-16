@@ -16,7 +16,6 @@ def constructor(self, meta, FLAGS):
 		r = 2 - (indx % base2) / base
 		g = 2 - (indx % base2) % base
 		return (b * 127, r * 127, g * 127)
-
 	misc.labels(meta, FLAGS)
 	assert len(meta['labels']) == meta['classes'], (
 		'labels.txt and {} indicate' + ' '
@@ -24,7 +23,7 @@ def constructor(self, meta, FLAGS):
 	).format(meta['model'])
 	colors = list()
 	base = int(np.ceil(pow(meta['classes'], 1./3)))
-	for x in range(len(meta['labels'])): 
+	for x in range(len(meta['labels'])):
 		colors += [_to_color(x, base)]
 	meta['colors'] = colors
 	self.fetch = list()

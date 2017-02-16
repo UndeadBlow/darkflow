@@ -10,12 +10,12 @@ import os
 def _batch(self, chunk):
     """
     Takes a chunk of parsed annotations
-    returns value for placeholders of net's 
+    returns value for placeholders of net's
     input & loss layer correspond to this chunk
     """
     meta = self.meta
     labels = meta['labels']
-    
+
     H, W, _ = meta['out_size']
     C, B = meta['classes'], meta['num']
     anchors = meta['anchors']
@@ -65,7 +65,7 @@ def _batch(self, chunk):
     # Finalise the placeholders' values
     upleft   = np.expand_dims(prear[:,0:2], 1)
     botright = np.expand_dims(prear[:,2:4], 1)
-    wh = botright - upleft; 
+    wh = botright - upleft;
     area = wh[:,:,0] * wh[:,:,1]
     upleft   = np.concatenate([upleft] * B, 1)
     botright = np.concatenate([botright] * B, 1)
@@ -73,13 +73,12 @@ def _batch(self, chunk):
 
     # value for placeholder at input layer
     inp_feed_val = img
-    # value for placeholder at loss layer 
+    # value for placeholder at loss layer
     loss_feed_val = {
-        'probs': probs, 'confs': confs, 
+        'probs': probs, 'confs': confs,
         'coord': coord, 'proid': proid,
-        'areas': areas, 'upleft': upleft, 
+        'areas': areas, 'upleft': upleft,
         'botright': botright
     }
 
     return inp_feed_val, loss_feed_val
-
