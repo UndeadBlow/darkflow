@@ -11,8 +11,10 @@ Read more about YOLO (in darknet) and download weight files for version 2 [here]
 ## Fork changes
 In that fork added feature to load original Darknet datasets, where you specify images dir and labels for that images (or txt files with list of both).
 For example, you have 1.png and you annotation file 1.txt:
+```
 # class x y w h
 0 0.1 0.34 0.232 0.7
+```
 
 And also fixed some minor bugs.
 
