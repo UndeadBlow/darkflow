@@ -135,7 +135,7 @@ To do that you need to specify directory with labels for trainset (or .txt file 
 Example of run:
 ```bash
 # Images and .txt annotations is in one directory train_sliced_subframes
-python3 flow --model cfg/navmii.cfg --train --dataset /home/wildchlamydia/CarsVideo/train_sliced_subframes/ --answers /home/wildchlamydia/CarsVideo/train_sliced_subframes/ --lr 0.001 --epoch 1 --batch 2 --save 50 --trainer adam
+python3 flow --model cfg/navmii.cfg --train --dataset train_sliced_subframes/ --answers train_sliced_subframes/ 
 ```
 
 Feature is in alpha stage (made just for working :) )
