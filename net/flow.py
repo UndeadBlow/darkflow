@@ -66,10 +66,18 @@ def train(self):
     if ckpt: _save_ckpt(self, *args)
 
 
+def GetAllFilesListRecusive(path, extensions):
+    files_all = []
+    for root, subFolders, files in os.walk(path):
+        for name in files:
+             # linux tricks with .directory that still is file
+            if not 'directory' in name and sum([ext in name for ext in extensions]) > 0:
+                files_all.append(os.path.join(root, name))
+    return files_all
+
 def predict(self):
     inp_path = self.FLAGS.test
-    all_inp_ = os.listdir(inp_path)
-    all_inp_ = [i for i in all_inp_ if self.framework.is_inp(i)]
+    all_inp_ = GetAllFilesListRecusive(inp_path, ['.png', '.jpg', '.jpeg'])
     if not all_inp_:
         msg = 'Failed to find any test files in {} .'
         exit('Error: {}'.format(msg.format(inp_path)))
