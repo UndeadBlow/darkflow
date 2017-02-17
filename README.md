@@ -8,6 +8,21 @@ Read more about YOLO (in darknet) and download weight files for version 2 [here]
 
 ![img](person.jpg)
 
+## Fork changes
+In that fork added feature to load original Darknet datasets, where you specify images dir and labels for that images (or txt files with list of both).
+For example, you have 1.png and you annotation file 1.txt:
+```
+# class x y w h
+0 0.1 0.34 0.232 0.7
+```
+
+And also fixed some minor bugs.
+
+What is nedeed to be done in future:
+* Test feature to load lists from .txt files
+* Check and fix test argument to make it like it works in Original Darknet
+* Fix loading from original dataset, for now it loads from relative values then converts to absolute and then during training again casts to relativies. It can be information losses during that casts.
+
 ## Dependencies
 
 Python3, tensorflow 0.12, numpy, opencv 3.
@@ -112,6 +127,18 @@ During training, the script will occasionally save intermediate results into Ten
 # Fine tuning yolo-tiny from the original one
 ./flow --train --model cfg/yolo-tiny.cfg --load bin/yolo-tiny.weights
 ```
+
+### Loading original dataset
+
+To do that you need to specify directory with labels for trainset (or .txt file with list of that labels).
+
+Example of run:
+```bash
+# Images and .txt annotations is in one directory train_sliced_subframes
+python3 flow --model cfg/navmii.cfg --train --dataset train_sliced_subframes/ --answers train_sliced_subframes/ 
+```
+
+Feature is in alpha stage (made just for working :) )
 
 ### Camera demo
 
