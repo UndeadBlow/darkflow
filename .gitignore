@@ -19,3 +19,6 @@ tfnet/yolo/*.parsed
 *.pb
 /profile
 /test.py
+/ckpt/
+*.pb
+*.weights

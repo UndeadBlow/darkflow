@@ -59,17 +59,17 @@ def loss(self, net_out):
     intersect_botright = tf.minimum(ceil , _botright)
     intersect_wh = intersect_botright - intersect_upleft
     intersect_wh = tf.maximum(intersect_wh, 0.0)
-    intersect = tf.mul(intersect_wh[:,:,:,0], intersect_wh[:,:,:,1])
+    intersect = tf.multiply(intersect_wh[:,:,:,0], intersect_wh[:,:,:,1])
     
     # calculate the best IOU, set 0.0 confidence for worse boxes
     iou = tf.truediv(intersect, _areas + area_pred - intersect)
     best_box = tf.equal(iou, tf.reduce_max(iou, [2], True))
     best_box = tf.to_float(best_box)
-    confs = tf.mul(best_box, _confs)
+    confs = tf.multiply(best_box, _confs)
 
     # take care of the weight terms
     conid = snoob * (1. - confs) + sconf * confs
-    weight_coo = tf.concat(3, 4 * [tf.expand_dims(confs, -1)])
+    weight_coo = tf.concat(axis=3, values=4 * [tf.expand_dims(confs, -1)])
     cooid = scoor * weight_coo
     proid = sprob * _proid
 
@@ -82,11 +82,11 @@ def loss(self, net_out):
     cooid = slim.flatten(cooid)
 
     self.fetch += [probs, confs, conid, cooid, proid]
-    true = tf.concat(1, [probs, confs, coord])
-    wght = tf.concat(1, [proid, conid, cooid])
+    true = tf.concat(axis=1, values=[probs, confs, coord])
+    wght = tf.concat(axis=1, values=[proid, conid, cooid])
 
     print('Building {} loss'.format(m['model']))
     loss = tf.pow(net_out - true, 2)
-    loss = tf.mul(loss, wght)
+    loss = tf.multiply(loss, wght)
     loss = tf.reduce_sum(loss, 1)
     self.loss = .5 * tf.reduce_mean(loss)

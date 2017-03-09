@@ -1,5 +1,6 @@
 from utils.pascal_voc_clean_xml import pascal_voc_clean_xml
 from utils.darknet_dataset_loader import darknet_data_loader
+from utils.darknet_dataset_loader import navmii_data_loader
 from numpy.random import permutation as perm
 from .test import preprocess
 # from .misc import show
@@ -30,12 +31,13 @@ def parse(self, exclusive = False):
     #                 return pickle.load(f, encoding = 'latin1')[0]
 
     # actual parsing
-    print('self.FLAGS.answers', self.FLAGS.answers)
-    if not self.FLAGS.annotation and not self.FLAGS.answers:
+
+    if not self.FLAGS.darkflow_dataset and not self.FLAGS.darknet_dataset and not self.FLAGS.navmii_dataset:
         msg = 'Please, set or labels or annotations directory!'
         exit('Error: {}'.format(msg))
-    if self.FLAGS.annotation:
-        ann = self.FLAGS.annotation
+
+    if self.FLAGS.darkflow_dataset:
+        ann = self.FLAGS.darkflow_dataset
         if not os.path.isdir(ann):
             msg = 'Annotation directory not found {} .'
             exit('Error: {}'.format(msg.format(ann)))
@@ -43,10 +45,16 @@ def parse(self, exclusive = False):
 
         dumps = pascal_voc_clean_xml(ann, meta['labels'], exclusive)
         print(dumps)
-    elif self.FLAGS.answers:
-        path_to_labels = self.FLAGS.answers
+
+    elif self.FLAGS.darknet_dataset:
+        path_to_labels = self.FLAGS.darknet_dataset
         print('Loading labels from ', path_to_labels)
-        dumps = darknet_data_loader(path_to_labels, self.FLAGS.dataset, meta['labels'])
+        dumps = darknet_data_loader(self.FLAGS.darknet_dataset, meta['labels'])
+
+    elif self.FLAGS.navmii_dataset:
+        path_to_labels = self.FLAGS.navmii_dataset
+        print('Loading labels from ', path_to_labels)
+        dumps = navmii_data_loader(self.FLAGS.navmii_dataset, meta['labels'], self.FLAGS, [0, 1, 2, 3, 4])
 
     save_to = os.path.join('net', 'yolo', meta['name'])
     while True:
@@ -168,6 +176,8 @@ def shuffle(self):
                         old_feed, [new]
                     ])
 
+            if not x_batch: # It's bicycle, I don't know why batch can be empty
+                continue
             x_batch = np.concatenate(x_batch, 0)
             yield x_batch, feed_batch
 

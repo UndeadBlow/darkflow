@@ -1,7 +1,8 @@
-
 import os
 import sys
 import cv2
+import utils.slicer as slicer
+import random
 
 def GetAllFilesList(path):
     files = [os.path.join(path, fn) for fn in next(os.walk(path))[2]]
@@ -16,10 +17,96 @@ def GetAllFilesListRecusive(path, extensions):
                 files_all.append(os.path.join(root, name))
     return files_all
 
-def darknet_data_loader(labels_path, images_path, classes):
+def navmii_data_loader(path, classes_names, FLAGS, classes_to_load = []):
+
+    files = GetAllFilesListRecusive(path, ['_o.xml'])
+    random.shuffle(files)
+    video_exts = ['.mp4', '.mpeg', '.avi', '.mov']
+    all_videofiles = GetAllFilesListRecusive(path, video_exts)
+    dumps = []
+
+    if FLAGS.slice_frame:
+        slice_step = FLAGS.slice_step
+        slice_win_size = FLAGS.slice_win_size
+        slice_down_rate = FLAGS.slice_down_rate
+        dumps = []
+
+        for file in files:
+            frame, objects = slicer.getObjectsAndFrame(file)
+            subframes, sliced_objects, positions, sizes = slicer.SliceFrame(frame, objects, slice_step, slice_win_size, slice_down_rate)
+
+            for index in range(len(subframes)):
+                subframe_sliced_objects = sliced_objects[index]
+                position = positions[index]
+                size = sizes[index]
+                subframe = subframes[index]
+
+                video_filename = file[: file.rfind('/')]
+
+                frame_number = file[file.rfind('/'): ]
+                frame_number = frame_number[frame_number.find('f') + 1: frame_number.find('_o')]
+
+                video_filename = ([f for f in all_videofiles if video_filename in f])[0]
+                if not video_filename or not os.path.exists(video_filename):
+                    continue
+
+                video_filename = video_filename + ':' + frame_number
+                video_filename += '@' + str(position[0]) + '_' + str(position[1]) + '_' +\
+                str(size[0]) + '_' + str(size[1]) + '_' + str(slice_win_size)
+
+                dump_objects = []
+                for obj in subframe_sliced_objects:
+                    cl = obj.type - 1
+
+                    if cl not in classes_to_load and classes_to_load != []:
+                        continue
+
+                    x = obj.rect.x
+                    y = obj.rect.y
+                    w = obj.rect.w
+                    h = obj.rect.h
+                    dump_objects.append([classes_names[int(cl)], x, y, x + w, y + h])
+
+                if dump_objects == []:
+                    continue
+
+                dumps.append([video_filename, [subframe.shape[1], subframe.shape[0], dump_objects]])
+
+    else:
+        for file in files:
+            frame, objects = slicer.getObjectsAndFrame(file)
+            dump_objects = []
+            for obj in objects:
+
+                cl = obj.type - 1
+
+                if cl not in classes_to_load and classes_to_load != []:
+                    continue
+
+                x = obj.rect.x
+                y = obj.rect.y
+                w = obj.rect.w
+                h = obj.rect.h
+                dump_objects.append([classes_names[int(cl)], x, y, x + w, y + h])
+
+            video_filename = file[: file.rfind('/')]
+
+            frame_number = file[file.rfind('/'): ]
+            frame_number = frame_number[frame_number.find('f') + 1: frame_number.find('_o')]
+
+            filename = ([f for f in all_videofiles if video_filename in f])[0]
+
+            if dump_objects == []:
+                continue
+
+            dumps.append([filename + ':' + frame_number, [frame.shape[1], frame.shape[0], dump_objects]])
+
+    return dumps
+
+def darknet_data_loader(path, classes_names, classes_to_load = []):
     txt_files = []
     imgs_files = []
-    if os.path.isfile(labels_path):
+    if os.path.isfile(path):
         # then load files from txt list file
         with open(labels_path, 'r') as file:
             txt_files = file.read().split('\n')
@@ -33,15 +120,15 @@ def darknet_data_loader(labels_path, images_path, classes):
         for f in imgs_files:
             f = f.strip()
 
-    elif os.path.isdir(labels_path):
+    elif os.path.isdir(path):
         possible_img_extensions = ['.png', '.PNG', '.jpg', '.jpeg']
-        files = GetAllFilesList(labels_path)
+        files = GetAllFilesListRecusive(path, ['.txt'])
 
         for file in files:
             if '.txt' in file:
                 pure_filename = file[file.rfind('/') + 1 : file.rfind('.')]
                 #print('pure filename:', pure_filename)
-                img_filename = images_path + '/' + pure_filename
+                img_filename = path + '/' + pure_filename
                 for ext in possible_img_extensions:
                     if os.path.isfile(img_filename + ext):
                         img_filename += ext
@@ -76,11 +163,13 @@ def darknet_data_loader(labels_path, images_path, classes):
                     print(obj_data)
                     break
                 cl = obj_data[0]
-                x = int(float(obj_data[1]) * img.shape[1])
-                y = int(float(obj_data[2]) * img.shape[0])
-                w = int(float(obj_data[3]) * img.shape[1])
-                h = int(float(obj_data[4]) * img.shape[0])
-                objects.append([classes[int(cl)], x, y, x + w, y + h])
+                if cl in classes_to_load or classes_to_load == []:
+                    x = int(float(obj_data[1]) * img.shape[1])
+                    y = int(float(obj_data[2]) * img.shape[0])
+                    w = int(float(obj_data[3]) * img.shape[1])
+                    h = int(float(obj_data[4]) * img.shape[0])
+                    obj = [classes_names[int(cl)], x, y, x + w, y + h]
+                    objects.append(obj)
 
             if objects == []:
                 continue

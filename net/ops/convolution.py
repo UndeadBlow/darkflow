@@ -17,8 +17,8 @@ class reorg(BaseOp):
                 boxij = inp[:, si: si+s, sj: sj+s,:]
                 flatij = tf.reshape(boxij, [-1,1,1,c*s*s])
                 row_i += [flatij]
-            out += [tf.concat(2, row_i)]
-        self.out = tf.concat(1, out)
+            out += [tf.concat(axis=2, values=row_i)]
+        self.out = tf.concat(axis=1, values=out)
 
     def forward(self):
         inp = self.inp.out
@@ -48,12 +48,12 @@ class local(BaseOp):
                 i_, j_ = i + 1 - half, j + 1 - half
                 tij = temp[:, i_ : i_ + ksz, j_ : j_ + ksz,:]
                 row_i.append(
-                    tf.nn.conv2d(tij, kij, 
-                        padding = 'VALID', 
+                    tf.nn.conv2d(tij, kij,
+                        padding = 'VALID',
                         strides = [1] * 4))
-            out += [tf.concat(2, row_i)]
+            out += [tf.concat(axis=2, values=row_i)]
 
-        self.out = tf.concat(1, out)
+        self.out = tf.concat(axis=1, values=out)
 
     def speak(self):
         l = self.lay
@@ -66,9 +66,9 @@ class convolutional(BaseOp):
     def forward(self):
         pad = [[self.lay.pad, self.lay.pad]] * 2;
         temp = tf.pad(self.inp.out, [[0, 0]] + pad + [[0, 0]])
-        temp = tf.nn.conv2d(temp, self.lay.w['kernel'], padding = 'VALID', 
+        temp = tf.nn.conv2d(temp, self.lay.w['kernel'], padding = 'VALID',
             name = self.scope, strides = [1] + [self.lay.stride] * 2 + [1])
-        if self.lay.batch_norm: 
+        if self.lay.batch_norm:
             temp = self.batchnorm(self.lay, temp)
         self.out = tf.nn.bias_add(temp, self.lay.w['biases'])
 
@@ -86,7 +86,7 @@ class convolutional(BaseOp):
                 'is_training': layer.h['is_training']
                 })
             v = tf.__version__.split('.')[1]
-            if int(v) < 12: key = 'initializers'
+            if int(v) < 12: key = 'param_initializers'
             else: key = 'param_initializers'
             args.update({key : layer.w})
             return slim.batch_norm(inp, **args)

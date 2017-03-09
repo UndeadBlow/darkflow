@@ -23,7 +23,13 @@ def _batch(self, chunk):
     # preprocess
     jpg = chunk[0]; w, h, allobj_ = chunk[1]
     allobj = deepcopy(allobj_)
-    path = os.path.join(self.FLAGS.dataset, jpg)
+    if self.FLAGS.darkflow_dataset:
+        path = os.path.join(self.FLAGS.darkflow_dataset, jpg)
+    if self.FLAGS.darknet_dataset:
+        path = os.path.join(self.FLAGS.darknet_dataset.replace('.txt', ''), jpg)
+    if self.FLAGS.navmii_dataset:
+        path = os.path.join(self.FLAGS.navmii_dataset, jpg)
+
     img = self.preprocess(path, allobj)
 
     # Calculate regression target

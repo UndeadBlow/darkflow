@@ -3,6 +3,7 @@ from utils.box import BoundBox, box_iou, prob_compare
 import numpy as np
 import cv2
 import os
+import utils.slicer as slicer
 
 def _fix(obj, dims, scale, offs):
 	for i in range(1, 5):
@@ -16,32 +17,65 @@ def preprocess(self, im, allobj = None):
 	Takes an image, return it as a numpy tensor that is readily
 	to be fed into tfnet. If there is an accompanied annotation (allobj),
 	meaning this preprocessing is serving the train process, then this
-	image will be transformed with random noise to augment training data, 
-	using scale, translation, flipping and recolor. The accompanied 
+	image will be transformed with random noise to augment training data,
+	using scale, translation, flipping and recolor. The accompanied
 	parsed annotation (allobj) will also be modified accordingly.
-	"""	
-	if type(im) is not np.ndarray:
-		im = cv2.imread(im)
+	"""
+	if isinstance(im, np.ndarray):
+		image = im
+	elif (slicer.isVideofile(im)):
+		filename, frame_num = im.split(':')
+		if '@' in frame_num:
+			frame_num = frame_num.split('@')[0]
+		# print('Loading frame ', frame_num, ' from video ', filename)
+		image = slicer.getFrameFromVideo(filename, int(frame_num))
+	else:
+		filename = im
+		image = cv2.imread(filename)
+
+	# Bicycle for supporting frame slicing. In filename hardcoded info about tile
+	if not isinstance(im, np.ndarray):
+		if '@' in im:
+			temp = im.split('@')[1]
+			# print('temp', temp)
+			temp = temp.split('_')
+			win_size = int(temp[4])
+			position = [int(temp[0]), int(temp[1])]
+			size = [int(temp[2]), int(temp[3])]
+			# print('win_size', win_size)
+			# print('position', position)
+			# print('image current shape: ', image.shape)
+			# print('size', (size[0], size[1]))
+			image = cv2.resize(image, (size[1], size[0]))
+			# print('allobj', allobj)
+			image = image[position[0]: position[0] + win_size,
+						  position[1]: position[1] + win_size]
+		# print('image last shape', image.shape)
+
+	# cv2.imshow('1', image)
+	# print(allobj)
+	# print('-----------------------------\n')
+	# cv2.waitKey(0)
 
 	if allobj is not None: # in training mode
-		result = imcv2_affine_trans(im)
-		im, dims, trans_param = result
+		result = imcv2_affine_trans(image)
+		image, dims, trans_param = result
 		scale, offs, flip = trans_param
 		for obj in allobj:
 			_fix(obj, dims, scale, offs)
-			if not flip: continue
+			if not flip: continue;
 			obj_1_ =  obj[1]
 			obj[1] = dims[0] - obj[3]
 			obj[3] = dims[0] - obj_1_
-		im = imcv2_recolor(im)
+		image = imcv2_recolor(image)
 
 	h, w, c = self.meta['inp_size']
-	imsz = cv2.resize(im, (h, w))
+	imsz = cv2.resize(image, (h, w))
 	imsz = imsz / 255.
 	imsz = imsz[:,:,::-1]
 	if allobj is None: return imsz
-	return imsz#, np.array(im) # for unit testing
-	
+	return imsz#, np.array(image) # for unit testing
+
 def postprocess(self, net_out, im, save = True):
 	"""
 	Takes net output, draw predictions, save to disk
@@ -106,16 +140,16 @@ def postprocess(self, net_out, im, save = True):
 			if top   < 0    :   top = 0
 			if bot   > h - 1:   bot = h - 1
 			thick = int((h + w) // 150)
-			cv2.rectangle(imgcv, 
-				(left, top), (right, bot), 
+			cv2.rectangle(imgcv,
+				(left, top), (right, bot),
 				self.meta['colors'][max_indx], thick)
 			mess = '{}'.format(label)
 			cv2.putText(
-				imgcv, mess, (left, top - 12), 
+				imgcv, mess, (left, top - 12),
 				0, 1e-3 * h, self.meta['colors'][max_indx],
 				thick // 3)
 
 	if not save: return imgcv
-	outfolder = os.path.join(FLAGS.test, 'out') 
+	outfolder = os.path.join(FLAGS.test, 'out')
 	img_name = os.path.join(outfolder, im.split('/')[-1])
 	cv2.imwrite(img_name, imgcv)
