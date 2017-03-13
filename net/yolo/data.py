@@ -164,6 +164,8 @@ def shuffle(self):
             for j in range(b*batch, b*batch+batch):
                 train_instance = data[shuffle_idx[j]]
                 inp, new_feed = self._batch(train_instance)
+                if inp == None or new_feed == None:
+                    continue
 
                 if inp is None: continue
                 x_batch += [np.expand_dims(inp, 0)]
@@ -176,7 +178,7 @@ def shuffle(self):
                         old_feed, [new]
                     ])
 
-            if not x_batch: # It's bicycle, I don't know why batch can be empty
+            if not x_batch:
                 continue
             x_batch = np.concatenate(x_batch, 0)
             yield x_batch, feed_batch

@@ -57,6 +57,9 @@ def preprocess(self, im, allobj = None):
 	# print('-----------------------------\n')
 	# cv2.waitKey(0)
 
+	if not isinstance(im, np.ndarray):
+		return None
+
 	if allobj is not None: # in training mode
 		result = imcv2_affine_trans(image)
 		image, dims, trans_param = result

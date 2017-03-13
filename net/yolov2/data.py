@@ -31,6 +31,8 @@ def _batch(self, chunk):
         path = os.path.join(self.FLAGS.navmii_dataset, jpg)
 
     img = self.preprocess(path, allobj)
+    if img == None:
+        return None, None
 
     # Calculate regression target
     cellx = 1. * w / W
