@@ -57,7 +57,7 @@ def preprocess(self, im, allobj = None):
 	# print('-----------------------------\n')
 	# cv2.waitKey(0)
 
-	if not isinstance(im, np.ndarray):
+	if not isinstance(image, np.ndarray):
 		return None
 
 	if allobj is not None: # in training mode
