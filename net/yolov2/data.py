@@ -6,6 +6,7 @@ from copy import deepcopy
 import pickle
 import numpy as np
 import os
+import cv2
 
 def _batch(self, chunk):
     """
@@ -39,6 +40,7 @@ def _batch(self, chunk):
     # Calculate regression target
     cellx = 1. * w / W
     celly = 1. * h / H
+
     for obj in allobj:
         centerx = .5*(obj[1]+obj[3]) #xmin, xmax
         centery = .5*(obj[2]+obj[4]) #ymin, ymax

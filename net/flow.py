@@ -195,17 +195,21 @@ def predictTestVideos(self):
             self.say('Processing video {}'.format(filename))
             duration_frames = int(slicer.getVideoLength(filename))
             self.say('Duration in frames {}'.format(duration_frames))
+
             while position < duration_frames:
                 filenames.append(filename + ':' + str(position))
                 framename_path = filename
+
                 for ext in [".mp4", ".avi", ".mov", ".mpeg"]:
                     if ext in filename:
                         framename_path = filename.replace(ext, '')
+
                 if not os.path.exists(framename_path): os.makedirs(framename_path)
                 fr_num = "%08d" % int(position)
                 frame_filename = framename_path + "/f{}.png".format(fr_num)
                 out_names.append(frame_filename)
                 position += step
+
         self.predictList(filenames, out_names)
 
 def predictTestVideosWithSlicing(self):
@@ -221,13 +225,15 @@ def predictTestVideosWithSlicing(self):
             while position < duration_frames:
                 frame = slicer.getFrameFromVideo(filename, position)
                 framename_path = filename
+
                 for ext in [".mp4", ".avi", ".mov"]:
                     if ext in filename:
                         framename_path = filename.replace(ext, '')
+
                 if not os.path.exists(framename_path): os.makedirs(framename_path)
                 fr_num = "%08d" % int(position)
                 frame_filename = framename_path + "/f{}.png".format(fr_num)
-                self.processFrameBySlicing(frame, frame_filename, framename_path + ':' + fr_num)
+                self.processFrameBySlicing(frame, frame_filename, filename + ':' + fr_num)
                 position += step
 
 def predictTestImagesWithSlicing(self):
@@ -290,13 +296,14 @@ def processFrameBySlicing(self, frame, frame_filename, video_filename = ''):
         if video_filename != '': # For videos because we need to know frame number
             name = video_filename
         self.framework.drawAndSaveResults(boxes, name,
-        raw_yolo_coords = False)
+        raw_yolo_coords = False, out_name = frame_filename)
 
 def predictList(self, images_names, output_names = []):
     inp_path = self.FLAGS.test
     batch = min(self.FLAGS.batch, len(images_names))
     classes = self.meta['labels']
 
+    index_for_names = 1
     for j in range(len(images_names) // batch):
         inp_feed = list(); new_all = list()
         all_inp = images_names[j*batch: (j*batch+batch)]
@@ -332,7 +339,8 @@ def predictList(self, images_names, output_names = []):
                 if self.FLAGS.save_xml:
                     xml_filename = output_names[i].replace('.png', '_o.xml')
                     saveFrameToXML(boxes, classes, xml_filename)
-                self.framework.drawAndSaveResults(boxes, im = all_inp[i], out_name = output_names[i])
+                self.framework.drawAndSaveResults(boxes, im = all_inp[i], out_name = output_names[index_for_names])
+                index_for_names += 1
 
         stop = time.time(); last = stop - start
 

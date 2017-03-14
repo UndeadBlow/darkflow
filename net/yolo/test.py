@@ -29,9 +29,11 @@ def preprocess(self, im, allobj = None):
 			frame_num = frame_num.split('@')[0]
 		# print('Loading frame ', frame_num, ' from video ', filename)
 		image = slicer.getFrameFromVideo(filename, int(frame_num))
+		image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 	else:
 		filename = im
 		image = cv2.imread(filename)
+		image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
 	# Bicycle for supporting frame slicing. In filename hardcoded info about tile
 	if not isinstance(im, np.ndarray):

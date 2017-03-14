@@ -118,5 +118,7 @@ def drawAndSaveResults(self, boxes, im, save = True, raw_yolo_coords = True, out
 	if not out_name:
 		img_name = os.path.join(outfolder, "out_" + im.split('/')[-1])
 	else:
+		print('out_name', out_name)
 		img_name = out_name
+	print('img_name', img_name)
 	cv2.imwrite(img_name, imgcv)
