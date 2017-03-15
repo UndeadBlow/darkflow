@@ -67,10 +67,9 @@ def drawAndSaveResults(self, boxes, im, save = True, raw_yolo_coords = True, out
 	meta = self.meta
 	colors = meta['colors']
 	labels = meta['labels']
-	threshold = meta['thresh']
+	threshold = self.FLAGS.threshold
 	C, B = meta['classes'], meta['num']
 
-	print('IM: ', im)
 	if (slicer.isVideofile(im)):
 		filename, frame_num = im.split(':')
 		print('Loading frame ', frame_num, ' from video ', filename)
@@ -81,12 +80,15 @@ def drawAndSaveResults(self, boxes, im, save = True, raw_yolo_coords = True, out
 	else: imgcv = im
 
 	h, w, _ = imgcv.shape
+
 	for b in boxes:
 		max_indx = np.argmax(b.probs)
 		max_prob = b.probs[max_indx]
 		label = 'object' * int(C < 2)
 		label += labels[max_indx] * int(C>1)
+
 		if max_prob <= threshold:
+			print('max_prob', max_prob, 'threshold', threshold)
 			continue
 
 		# See comment above function
@@ -115,10 +117,11 @@ def drawAndSaveResults(self, boxes, im, save = True, raw_yolo_coords = True, out
 
 	if not save: return imgcv
 	outfolder = self.FLAGS.test #os.path.join(self.FLAGS.test, 'out')
-	if not out_name:
+	
+	if im == out_name:
 		img_name = os.path.join(outfolder, "out_" + im.split('/')[-1])
 	else:
-		print('out_name', out_name)
 		img_name = out_name
+
 	print('img_name', img_name)
 	cv2.imwrite(img_name, imgcv)

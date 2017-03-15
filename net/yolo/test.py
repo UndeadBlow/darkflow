@@ -134,6 +134,7 @@ def postprocess(self, net_out, im, save = True):
 		imgcv = cv2.imread(im)
 	else: imgcv = im
 	h, w, _ = imgcv.shape
+
 	for b in boxes:
 		max_indx = np.argmax(b.probs)
 		max_prob = b.probs[max_indx]

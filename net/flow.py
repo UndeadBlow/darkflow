@@ -123,7 +123,9 @@ def processBoxes(self, boxes, max_iou = 0.25):
     return True
 
 def saveFrameToXML(boxes, classes, xml_filename):
-    xml = serial.points_to_xml(boxes, classes)
+    xml = serial.points_to_xml(boxes, [1])
+    if xml == '':
+        return
     file = open(xml_filename, 'w')
     file.write(xml)
 
@@ -339,7 +341,14 @@ def predictList(self, images_names, output_names = []):
                 if self.FLAGS.save_xml:
                     xml_filename = output_names[i].replace('.png', '_o.xml')
                     saveFrameToXML(boxes, classes, xml_filename)
-                self.framework.drawAndSaveResults(boxes, im = all_inp[i], out_name = output_names[index_for_names])
+
+                o_name = ''
+                if not output_names == []:
+                    o_name = output_names[index_for_names]
+                else:
+                    o_name = ''
+
+                self.framework.drawAndSaveResults(boxes, im = all_inp[i], out_name = o_name)
                 index_for_names += 1
 
         stop = time.time(); last = stop - start
