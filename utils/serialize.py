@@ -25,9 +25,15 @@ def points_to_xml(boxes, classes, skipped = False):
    objs = etree.SubElement(ocv_storage
    , 'Objects')
 
+   added = 0
    for box in boxes:
-       el = etree.SubElement(objs, '_')
-       add_to_element(el, box)
+       if box.class_num in classes:
+           el = etree.SubElement(objs, '_')
+           add_to_element(el, box)
+           added += 1
+
+   if added < 1:
+       return ''
 
    xml_str = '{}'.format(etree.tostring(xml, encoding='utf8', method='xml'))
    # I don't know why b' at the start of file comes here but it comes. Little hotfix
