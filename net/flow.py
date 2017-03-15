@@ -305,7 +305,7 @@ def predictList(self, images_names, output_names = []):
     batch = min(self.FLAGS.batch, len(images_names))
     classes = self.meta['labels']
 
-    index_for_names = 1
+    index_for_names = 0
     for j in range(len(images_names) // batch):
         inp_feed = list(); new_all = list()
         all_inp = images_names[j*batch: (j*batch+batch)]
