@@ -32,6 +32,7 @@ def _batch(self, chunk):
         path = os.path.join(self.FLAGS.navmii_dataset, jpg)
 
     img = self.preprocess(path, allobj)
+
     if img is None:
         print ('img is none')
         print(img.shape)

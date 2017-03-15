@@ -78,6 +78,9 @@ def preprocess(self, im, allobj = None):
 	imsz = cv2.resize(image, (h, w))
 	imsz = imsz / 255.
 	imsz = imsz[:,:,::-1]
+
+	image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
 	if allobj is None: return imsz
 	return imsz#, np.array(image) # for unit testing
 
