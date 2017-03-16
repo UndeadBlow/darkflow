@@ -187,12 +187,12 @@ def convBoxesCoordsToAbsolute(subframe_boxes, threshold, orig_frame_shape, frame
 
 def predictTestVideos(self):
     inp_path = self.FLAGS.test
-    position = 1
     step = self.FLAGS.video_step
     files = GetAllFilesListRecusive(inp_path, ['.mp4', '.avi', '.mpeg'])
     for filename in files:
         filenames = []
         out_names = []
+        position = 1
         if slicer.isVideofile(filename):
             self.say('Processing video {}'.format(filename))
             duration_frames = int(slicer.getVideoLength(filename))
@@ -216,10 +216,10 @@ def predictTestVideos(self):
 
 def predictTestVideosWithSlicing(self):
     inp_path = self.FLAGS.test
-    position = 1
     step = self.FLAGS.video_step
     files = GetAllFilesListRecusive(inp_path, ['.mp4', '.avi', '.mpeg'])
     for filename in files:
+        position = 1
         if slicer.isVideofile(filename):
             self.say('Processing video {}'.format(filename))
             duration_frames = int(slicer.getVideoLength(filename))
