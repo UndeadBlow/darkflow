@@ -25,7 +25,8 @@ def getProcessedBoxes(self, net_out):
 	H, W, _ = meta['out_size']
 	C, B = meta['classes'], meta['num']
 	anchors = meta['anchors']
-	threshold = meta['thresh']
+	threshold = self.FLAGS.threshold
+	max_iou = self.FLAGS.slice_max_iou
 	net_out = net_out.reshape([H, W, B, -1])
 
 	boxes = list()
@@ -34,6 +35,9 @@ def getProcessedBoxes(self, net_out):
 			for b in range(B):
 				bx = BoundBox(C)
 				bx.x, bx.y, bx.w, bx.h, bx.c = net_out[row, col, b, :5]
+
+				#print(bx.x, bx.y, bx.w, bx.h, bx.c)
+
 				bx.c = expit(bx.c)
 				bx.x = (col + expit(bx.x)) / W
 				bx.y = (row + expit(bx.y)) / H
@@ -44,19 +48,18 @@ def getProcessedBoxes(self, net_out):
 				bx.probs *= bx.probs > threshold
 				boxes.append(bx)
 
-	# non max suppress boxes
 	for c in range(C):
 		for i in range(len(boxes)):
 			max_indx = np.argmax(boxes[i].probs)
 			boxes[i].class_num = max_indx
-		boxes = sorted(boxes, key = prob_compare)
-		for i in range(len(boxes)):
-			boxi = boxes[i]
-			if boxi.probs[c] == 0: continue
-			for j in range(i + 1, len(boxes)):
-				boxj = boxes[j]
-				if box_iou(boxi, boxj) >= .4:
-					boxes[j].probs[c] = 0.
+	#	boxes = sorted(boxes, key = prob_compare)
+	# 	for i in range(len(boxes)):
+	# 		boxi = boxes[i]
+	# 		if boxi.probs[c] == 0: continue
+	# 		for j in range(i + 1, len(boxes)):
+	# 			boxj = boxes[j]
+	# 			if box_iou(boxi, boxj) >= max_iou:
+	# 				boxes[j].probs[c] = 0.
 
 	return boxes
 
@@ -67,7 +70,6 @@ def drawAndSaveResults(self, boxes, im, save = True, raw_yolo_coords = True, out
 	meta = self.meta
 	colors = meta['colors']
 	labels = meta['labels']
-	threshold = meta['thresh']
 	C, B = meta['classes'], meta['num']
 
 	print('IM: ', im)
@@ -83,13 +85,14 @@ def drawAndSaveResults(self, boxes, im, save = True, raw_yolo_coords = True, out
 	h, w, _ = imgcv.shape
 	for b in boxes:
 		max_indx = np.argmax(b.probs)
-		max_prob = b.probs[max_indx]
+		print('max_indx', max_indx)
+		print('С', C)
 		label = 'object' * int(C < 2)
-		label += labels[max_indx] * int(C>1)
-		if max_prob <= threshold:
-			continue
+		print('label', label)
+		label += labels[max_indx] * int(C > 1)
 
 		# See comment above function
+		print('box', b.x, b.y, b.w, b.h)
 		if raw_yolo_coords:
 			left  = int ((b.x - b.w / 2.) * w)
 			right = int ((b.x + b.w / 2.) * w)
@@ -105,7 +108,7 @@ def drawAndSaveResults(self, boxes, im, save = True, raw_yolo_coords = True, out
 		if right > w - 1: right = w - 1
 		if top   < 0    :   top = 0
 		if bot   > h - 1:   bot = h - 1
-		line_width = int((h + w)/300)
+		line_width = int((h + w) / 300)
 		cv2.rectangle(imgcv,
 			(left, top), (right, bot),
 			colors[max_indx], line_width)

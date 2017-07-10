@@ -48,6 +48,7 @@ def train(self):
         feed_dict = {
             loss_ph[key]: datum[key]
                 for key in loss_ph }
+
         feed_dict[self.inp] = x_batch
         feed_dict.update(self.feed)
 
@@ -79,15 +80,79 @@ def GetAllFilesListRecusive(path, extensions):
                 files_all.append(os.path.join(root, name))
     return files_all
 
+def GetProcessedBoxes(self, raw_boxes, raw_yolo_coords = False):
+
+    threshold = self.FLAGS.threshold
+    max_iou = self.FLAGS.slice_max_iou
+
+    # non zero boxes
+    boxes = []
+
+    for box in raw_boxes:
+        indx = np.argmax(box.probs)
+        prob = box.probs[indx]
+        if prob > 0.0:
+            print('prob', prob)
+        if prob >= threshold:
+            boxes.append(box)
+
+    correct_boxes = []
+
+    for i in range(0, len(boxes)):
+        # checking box[i]
+        good_box = True
+        iou = 0
+        max_prob_one = 0
+        max_prob_two = 0
+        for j in range(0, len(boxes)):
+
+            if i != j and boxes[i].class_num == boxes[j].class_num:
+                if BoundBox.isRectsIntersect(boxes[i], boxes[j], raw_yolo_coords):
+
+                    iou = BoundBox.box_iou(boxes[i], boxes[j])
+                    if (iou > max_iou):
+                        max_indx_one = np.argmax(boxes[i].probs)
+                        max_prob_one = boxes[i].probs[max_indx_one]
+
+                        max_indx_two = np.argmax(boxes[j].probs)
+                        max_prob_two = boxes[j].probs[max_indx_two]
+
+                        if max_prob_one <= max_prob_two:
+                            good_box = False
+                            break
+
+                if boxes[i].isMeInsideThat(boxes[j], raw_yolo_coords):
+                    # One box inside other while them both the same class? It's definitely not ok
+                    good_box = False
+                    break
+
+        if good_box == True:
+            correct_boxes.append(boxes[i])
+
+    return correct_boxes
+
 # Returns True if all is processed and False otherwise.
 # Use it in while loop
 def processBoxes(self, boxes, max_iou = 0.25):
-    self.say('processBoxes, got {} boxes'.format(len(boxes)))
+    #self.say('processBoxes, got {} boxes'.format(len(boxes)))
+
+    threshold = self.FLAGS.threshold
+
+    for box in boxes:
+        indx = np.argmax(box.probs)
+        prob = box.probs[indx]
+        if prob < threshold:
+            boxes.remove(box)
+            return False
 
     for box_one in boxes:
         for box_two in boxes:
             # Classes must be different, otherwise it can be two intersected correct boxes
             if box_one != box_two and box_one.class_num == box_two.class_num:
+
+                if not BoundBox.isRectsIntersect(box_one, box_two):
+                    continue
+
                 iou = BoundBox.box_iou(box_one, box_two)
                 if (iou > max_iou):
                     # Two boxes conflict. Which one will survive?
@@ -188,7 +253,7 @@ def convBoxesCoordsToAbsolute(subframe_boxes, threshold, orig_frame_shape, frame
 def predictTestVideos(self):
     inp_path = self.FLAGS.test
     step = self.FLAGS.video_step
-    files = GetAllFilesListRecusive(inp_path, ['.mp4', '.avi', '.mpeg'])
+    files = GetAllFilesListRecusive(inp_path, [".mp4", ".avi", ".mov", ".mpeg"])
     for filename in files:
         filenames = []
         out_names = []
@@ -228,7 +293,7 @@ def predictTestVideosWithSlicing(self):
                 frame = slicer.getFrameFromVideo(filename, position)
                 framename_path = filename
 
-                for ext in [".mp4", ".avi", ".mov"]:
+                for ext in [".mp4", ".avi", ".mov", ".mpeg"]:
                     if ext in filename:
                         framename_path = filename.replace(ext, '')
 
@@ -254,6 +319,7 @@ def predictTestImagesWithSlicing(self):
 def processFrameBySlicing(self, frame, frame_filename, video_filename = ''):
     meta = self.meta
     threshold = self.FLAGS.threshold
+    max_iou = self.FLAGS.slice_max_iou
     classes = meta['labels']
     inp_path = self.FLAGS.test
 
@@ -270,6 +336,7 @@ def processFrameBySlicing(self, frame, frame_filename, video_filename = ''):
         position = positions[i]
         size = sizes[i]
 
+        print('processFrameBySlicing')
         input = self.framework.preprocess(subframe)
         expanded = np.expand_dims(input, 0)
         feed_dict = {self.inp : expanded}
@@ -287,7 +354,7 @@ def processFrameBySlicing(self, frame, frame_filename, video_filename = ''):
         frame.shape, size, subframe.shape, position)
 
     # Process to remove conflicted and bad boxes
-    while(not self.processBoxes(boxes, self.FLAGS.slice_max_iou)): continue
+    while(not self.processBoxes(boxes)): continue
 
     # Save results
     if self.FLAGS.save_xml:
@@ -329,8 +396,11 @@ def predictList(self, images_names, output_names = []):
 
         self.say('Post processing {} inputs ...'.format(len(inp_feed)))
         start = time.time()
+
         for i, prediction in enumerate(out):
             boxes = self.framework.getProcessedBoxes(prediction)
+
+            boxes = self.GetProcessedBoxes(boxes, raw_yolo_coords = True)
 
             if not output_names:
                 if self.FLAGS.save_xml:

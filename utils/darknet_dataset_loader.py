@@ -62,9 +62,46 @@ def navmii_data_loader(path, classes_names, FLAGS, classes_to_load = []):
                         continue
 
                     x = obj.rect.x
+
+                    if x < 0:
+                        x = 0
+                    if x > frame.shape[1]:
+                        x = frame.shape[1]
+
                     y = obj.rect.y
+
+                    if y < 0:
+                        y = 0
+                    if y > frame.shape[0]:
+                        y = frame.shape[0]
+
                     w = obj.rect.w
+
+                    if w < 25:
+                        continue
+                    if w + x > (frame.shape[1]):
+                        w -= (w + x - frame.shape[1])
+                    if w < 25:
+                        continue
+                    if w > (frame.shape[0] * 0.3):
+                        continue
+
                     h = obj.rect.h
+
+                    if h < 25:
+                        continue
+                    if h + y > (frame.shape[0]):
+                        h -= (h + y - frame.shape[0])
+                    if h < 25:
+                        continue
+                    if h > (frame.shape[1] * 0.3):
+                        continue
+
+                    if h < (w / 2.0) and w < (h / 2.0):
+                        continue
+
+                    print([classes_names[int(cl)], x, y, x + w, y + h])
+
                     dump_objects.append([classes_names[int(cl)], x, y, x + w, y + h])
 
                 if dump_objects == []:
@@ -74,7 +111,20 @@ def navmii_data_loader(path, classes_names, FLAGS, classes_to_load = []):
 
     else:
         for file in files:
+
+            if slicer.isVideofile(file):
+                video_filename = file[: file.rfind('/')]
+                frame_number = file[file.rfind('/'): ]
+                frame_number = frame_number[frame_number.find('f') + 1: frame_number.find('_o')]
+                filename = ([f for f in all_videofiles if video_filename in f])[0]
+
             frame, objects = slicer.getObjectsAndFrame(file)
+
+            if frame == None:
+                print(file, file.replace('_o.xml', '.png'))
+                print('None frame')
+                continue
+
             dump_objects = []
             for obj in objects:
 
@@ -84,23 +134,55 @@ def navmii_data_loader(path, classes_names, FLAGS, classes_to_load = []):
                     continue
 
                 x = obj.rect.x
+
+                if x < 0:
+                    x = 0
+                if x > frame.shape[1]:
+                    x = frame.shape[1]
+
                 y = obj.rect.y
+
+                if y < 0:
+                    y = 0
+                if y > frame.shape[0]:
+                    y = frame.shape[0]
+
                 w = obj.rect.w
+
+                if w < 25:
+                    continue
+                if w + x > (frame.shape[1]):
+                    w -= (w + x - frame.shape[1])
+                if w < 25:
+                    continue
+                if w > (frame.shape[0] * 0.3):
+                    continue
+
                 h = obj.rect.h
+
+                if h < 25:
+                    continue
+                if h + y > (frame.shape[0]):
+                    h -= (h + y - frame.shape[0])
+                if h < 25:
+                    continue
+                if h > (frame.shape[1] * 0.3):
+                    continue
+
+                if h < (w / 2.0) and w < (h / 2.0):
+                    continue
+
                 dump_objects.append([classes_names[int(cl)], x, y, x + w, y + h])
-
-            video_filename = file[: file.rfind('/')]
-
-            frame_number = file[file.rfind('/'): ]
-            frame_number = frame_number[frame_number.find('f') + 1: frame_number.find('_o')]
-
-            filename = ([f for f in all_videofiles if video_filename in f])[0]
 
             if dump_objects == []:
                 continue
 
-            dumps.append([filename + ':' + frame_number, [frame.shape[1], frame.shape[0], dump_objects]])
-
+            if slicer.isVideofile(file):
+                dumps.append([filename + ':' + frame_number, [frame.shape[1], frame.shape[0], dump_objects]])
+            else:
+                dumps.append([file.replace('_o.xml', '.png'), [frame.shape[1], frame.shape[0], dump_objects]])
+                
+    print(len(dumps))
     return dumps
 
 def darknet_data_loader(path, classes_names, classes_to_load = []):

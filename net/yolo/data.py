@@ -54,7 +54,7 @@ def parse(self, exclusive = False):
     elif self.FLAGS.navmii_dataset:
         path_to_labels = self.FLAGS.navmii_dataset
         print('Loading labels from ', path_to_labels)
-        dumps = navmii_data_loader(self.FLAGS.navmii_dataset, meta['labels'], self.FLAGS, [0, 1, 2, 3, 4])
+        dumps = navmii_data_loader(self.FLAGS.navmii_dataset, meta['labels'], self.FLAGS)
 
     save_to = os.path.join('net', 'yolo', meta['name'])
     while True:
@@ -164,7 +164,7 @@ def shuffle(self):
             for j in range(b*batch, b*batch+batch):
                 train_instance = data[shuffle_idx[j]]
                 inp, new_feed = self._batch(train_instance)
-                
+
                 if inp is None:
                     continue
                 x_batch += [np.expand_dims(inp, 0)]

@@ -38,7 +38,7 @@ class YOLOv2(framework):
     preprocess = yolo.test.preprocess
     loss = yolov2.train.loss
     is_inp = yolo.misc.is_inp
-    #postprocess = yolov2.test.postprocess
+    postprocess = yolo.test.postprocess
     _batch = yolov2.data._batch
 
 """

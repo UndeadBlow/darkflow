@@ -11,7 +11,7 @@ labels20 = ["aeroplane", "bicycle", "bird", "boat", "bottle",
 # 8, 14, 15, 19
 
 voc_models = ['yolo-full', 'yolo-tiny', 'yolo-small',  # <- v1
-              'yolov1', 'tiny-yolov1', # <- v1.1 
+              'yolov1', 'tiny-yolov1', # <- v1.1
               'tiny-yolo-voc', 'yolo-voc'] # <- v2
 
 coco_models = ['tiny-coco', 'yolo-coco',  # <- v1.1
@@ -20,9 +20,9 @@ coco_models = ['tiny-coco', 'yolo-coco',  # <- v1.1
 coco_names = 'coco.names'
 nine_names = '9k.names'
 
-def labels(meta, FLAGS):    
+def labels(meta, FLAGS):
     model = meta['name']
-    if model in voc_models: 
+    if model in voc_models:
         meta['labels'] = labels20
     else:
         file = 'labels.txt'
@@ -36,10 +36,10 @@ def labels(meta, FLAGS):
             for lab in labs:
                 if lab == '----': break
                 meta['labels'] += [lab]
-    if len(meta['labels']) == 0: 
+    if len(meta['labels']) == 0:
         meta['labels'] = labels20
 
-def is_inp(self, name): 
+def is_inp(self, name):
     return name[-4:] in ['.jpg','.JPG', '.jpeg', '.JPEG']
 
 def show(im, allobj, S, w, h, cellx, celly):
@@ -63,8 +63,8 @@ def show(im, allobj, S, w, h, cellx, celly):
 def show2(im, allobj):
     for obj in allobj:
         cv2.rectangle(im,
-            (obj[1], obj[2]), 
-            (obj[3], obj[4]), 
+            (obj[1], obj[2]),
+            (obj[3], obj[4]),
             (0,0,255),2)
     cv2.imshow('result', im)
     cv2.waitKey()
@@ -88,7 +88,7 @@ def profile(self, net):
 #         if this.lay.type in conv_lay:
 #             fetch = [this.out] + fetch
 #             names = [this.lay.signature] + names
-#             mvave = [None] + mvave 
+#             mvave = [None] + mvave
 #         this = this.inp
 #     print(names)
 
@@ -112,7 +112,7 @@ def profile(self, net):
 #             for i, o in enumerate(out):
 #                 oi = out[i];
 #                 dim = len(oi.shape) - 1
-#                 ai = mvave[i]; 
+#                 ai = mvave[i];
 #                 mi = np.mean(oi, tuple(range(dim)))
 #                 vi = np.var(oi, tuple(range(dim)))
 #                 if ai is None: mvave[i] = [mi, vi]

@@ -30,6 +30,7 @@ class TFNet(object):
 	predictList = flow.predictList
 	processFrameBySlicing = flow.processFrameBySlicing
 	processBoxes = flow.processBoxes
+	GetProcessedBoxes = flow.GetProcessedBoxes
 	to_darknet = help.to_darknet
 	build_train_op = help.build_train_op
 	load_from_ckpt = help.load_from_ckpt

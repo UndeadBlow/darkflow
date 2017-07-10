@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 import os
 import utils.slicer as slicer
+from ..yolo.misc import show2
 
 def _fix(obj, dims, scale, offs):
 	for i in range(1, 5):
@@ -29,38 +30,41 @@ def preprocess(self, im, allobj = None):
 			frame_num = frame_num.split('@')[0]
 		# print('Loading frame ', frame_num, ' from video ', filename)
 		image = slicer.getFrameFromVideo(filename, int(frame_num))
+
+		###### ??????? Check if that necessary
 		image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
 	else:
 		filename = im
 		image = cv2.imread(filename)
-		image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+		#image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
 
-	# Bicycle for supporting frame slicing. In filename hardcoded info about tile
+	# Bicycle for supporting frame slicing. In filename hardcoded info about tiles
 	if not isinstance(im, np.ndarray):
 		if '@' in im:
 			temp = im.split('@')[1]
-			# print('temp', temp)
+
 			temp = temp.split('_')
 			win_size = int(temp[4])
 			position = [int(temp[0]), int(temp[1])]
 			size = [int(temp[2]), int(temp[3])]
-			# print('win_size', win_size)
-			# print('position', position)
-			# print('image current shape: ', image.shape)
-			# print('size', (size[0], size[1]))
+
 			image = cv2.resize(image, (size[1], size[0]))
-			# print('allobj', allobj)
+
 			image = image[position[0]: position[0] + win_size,
 						  position[1]: position[1] + win_size]
-		# print('image last shape', image.shape)
-
-	# cv2.imshow('1', image)
-	# print(allobj)
-	# print('-----------------------------\n')
-	# cv2.waitKey(0)
 
 	if not isinstance(image, np.ndarray):
 		return None
+############################################################
+############################################################
+	# cv2.imshow('1', image)
+	# print(im)
+	# print(allobj)
+	# print('-----------------------------\n')
+	# cv2.waitKey(0)
+############################################################
+############################################################
 
 	if allobj is not None: # in training mode
 		result = imcv2_affine_trans(image)
@@ -74,15 +78,28 @@ def preprocess(self, im, allobj = None):
 			obj[3] = dims[0] - obj_1_
 		image = imcv2_recolor(image)
 
+############################################################
+############################################################
+	# cv2.imshow('1', image)
+	# print(im)
+	# print(allobj)
+	# print('-----------------------------\n')
+	# cv2.waitKey(0)
+############################################################
+############################################################
+
 	h, w, c = self.meta['inp_size']
+
+	scale_w = float(image.shape[0]) / w
+	scale_h = float(image.shape[1]) / h
+
+	#show2(image, allobj)
 	imsz = cv2.resize(image, (h, w))
 	imsz = imsz / 255.
-	imsz = imsz[:,:,::-1]
-
-	image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+	imsz = imsz[:, :, : : -1]
 
 	if allobj is None: return imsz
-	return imsz#, np.array(image) # for unit testing
+	return imsz
 
 def postprocess(self, net_out, im, save = True):
 	"""
@@ -136,17 +153,18 @@ def postprocess(self, net_out, im, save = True):
 	h, w, _ = imgcv.shape
 	for b in boxes:
 		max_indx = np.argmax(b.probs)
+
 		max_prob = b.probs[max_indx]
 		label = self.meta['labels'][max_indx]
-		if max_prob > _thresh.get(label,threshold):
-			left  = int ((b.x - b.w/2.) * w)
-			right = int ((b.x + b.w/2.) * w)
-			top   = int ((b.y - b.h/2.) * h)
-			bot   = int ((b.y + b.h/2.) * h)
+		if max_prob > _thresh.get(label, threshold):
+			left  = int ((b.x - b.w / 2.) * w)
+			right = int ((b.x + b.w / 2.) * w)
+			top   = int ((b.y - b.h / 2.) * h)
+			bot   = int ((b.y + b.h / 2.) * h)
 			if left  < 0    :  left = 0
-			if right > w - 1: right = w - 1
-			if top   < 0    :   top = 0
-			if bot   > h - 1:   bot = h - 1
+			if right > w - 1:  right = w - 1
+			if top   < 0    :  top = 0
+			if bot   > h - 1:  bot = h - 1
 			thick = int((h + w) // 150)
 			cv2.rectangle(imgcv,
 				(left, top), (right, bot),

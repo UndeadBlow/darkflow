@@ -4,6 +4,7 @@ from ..yolo.test import preprocess
 from ..yolo.data import shuffle
 from copy import deepcopy
 import pickle
+from ..yolo.misc import show2
 import numpy as np
 import os
 import cv2
@@ -24,39 +25,38 @@ def _batch(self, chunk):
     # preprocess
     jpg = chunk[0]; w, h, allobj_ = chunk[1]
     allobj = deepcopy(allobj_)
+
     if self.FLAGS.darkflow_dataset:
         path = os.path.join(self.FLAGS.darkflow_dataset, jpg)
     if self.FLAGS.darknet_dataset:
         path = os.path.join(self.FLAGS.darknet_dataset.replace('.txt', ''), jpg)
     if self.FLAGS.navmii_dataset:
         path = os.path.join(self.FLAGS.navmii_dataset, jpg)
-
     img = self.preprocess(path, allobj)
-
-    if img is None:
-        print ('img is none')
-        print(img.shape)
-        return None, None
 
     # Calculate regression target
     cellx = 1. * w / W
     celly = 1. * h / H
-
-    for obj in allobj:
-        centerx = .5*(obj[1]+obj[3]) #xmin, xmax
-        centery = .5*(obj[2]+obj[4]) #ymin, ymax
+    i = 0
+    for obj, orig in zip(allobj, allobj_):
+        centerx = .5 * (obj[1] + obj[3]) #xmin, xmax
+        centery = .5 * (obj[2] + obj[4]) #ymin, ymax
         cx = centerx / cellx
         cy = centery / celly
         if cx >= W or cy >= H: return None, None
-        obj[3] = float(obj[3]-obj[1]) / w
-        obj[4] = float(obj[4]-obj[2]) / h
+        obj[3] = float(obj[3] - obj[1]) / w
+        obj[4] = float(obj[4] - obj[2]) / h
+        i += 1
+        if obj[3] < 0:
+            print(obj[3])
+            print(orig[0], orig[1], orig[2], orig[3], orig[4])
+            print(jpg, i)
+            quit()
         obj[3] = np.sqrt(obj[3])
         obj[4] = np.sqrt(obj[4])
         obj[1] = cx - np.floor(cx) # centerx
         obj[2] = cy - np.floor(cy) # centery
         obj += [int(np.floor(cy) * W + np.floor(cx))]
-
-    # show(im, allobj, S, w, h, cellx, celly) # unit test
 
     # Calculate placeholders' values
     probs = np.zeros([H*W,B,C])
@@ -76,10 +76,10 @@ def _batch(self, chunk):
         confs[obj[5], :] = [1.] * B
 
     # Finalise the placeholders' values
-    upleft   = np.expand_dims(prear[:,0:2], 1)
-    botright = np.expand_dims(prear[:,2:4], 1)
+    upleft   = np.expand_dims(prear[:, 0 : 2], 1)
+    botright = np.expand_dims(prear[:, 2 : 4], 1)
     wh = botright - upleft;
-    area = wh[:,:,0] * wh[:,:,1]
+    area = wh[:, :, 0] * wh[:, :, 1]
     upleft   = np.concatenate([upleft] * B, 1)
     botright = np.concatenate([botright] * B, 1)
     areas = np.concatenate([area] * B, 1)

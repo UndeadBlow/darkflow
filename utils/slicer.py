@@ -355,7 +355,7 @@ def getVideoLength(video_filename):
     print(video_filename)
     print(cap.open(video_filename))
     if not (cap.isOpened()):
-        print('Cant open file ', video_filename)
+        print('Can\'t open file ', video_filename)
         return 0
     return cap.get(cv2.CAP_PROP_FRAME_COUNT)
 
@@ -365,32 +365,42 @@ def getObjectsAndFrame(xml_filename):
 
     cap = cv2.VideoCapture()
 
-    video_filename = xml_filename[: xml_filename.rfind('/')]
+    possible_video_filename = xml_filename[: xml_filename.rfind('/')]
 
-    frame_number = xml_filename[xml_filename.rfind('/'): ]
-    frame_number = frame_number[frame_number.find('f') + 1: frame_number.find('_o')]
-    frame_number = int(frame_number)
+    files = GetAllFilesList(possible_video_filename[: possible_video_filename.rfind('/')])
+    # If possible to find correlated video file - then read frame from it
+    video_filenames = list([file for file in files if isVideofile(file) and possible_video_filename in file])
+    video_filename = video_filenames if len(video_filenames) else None
 
-    files = GetAllFilesList(video_filename[: video_filename.rfind('/')])
+    if not video_filename == None:
+        frame_number = xml_filename[xml_filename.rfind('/'): ]
+        frame_number = frame_number[frame_number.find('f') + 1: frame_number.find('_o')]
+        try:
+            frame_number = int(frame_number)
+        except:
+            return None, objects
 
-    for file in files:
-        if isVideofile(file) and video_filename in file:
-            video_filename = file
-            cap.open(video_filename)
-
-    if not (cap.isOpened()):
-        print('Cant open file', video_filename)
-        return
-    cap.set(cv2.CAP_PROP_POS_FRAMES, frame_number)
-
-    ret, frame = cap.read()
+        cap.open(video_filename)
+        if not (cap.isOpened()):
+            print('Can\'t open file', video_filename)
+            frame = None
+        else:
+            cap.set(cv2.CAP_PROP_POS_FRAMES, frame_number)
+            ret, frame = cap.read()
+    else:
+        if os.path.exists(xml_filename.replace('_o.xml', '.png')):
+            #print('Reading: ', xml_filename.replace('_o.xml', '.png'))
+            frame = cv2.imread(xml_filename.replace('_o.xml', '.png'))
+        else:
+            #print(xml_filename.replace('_o.xml', '.png'), ' not exists')
+            frame = None
 
     objects = []
 
     for obj in root.findall('Objects')[0].findall('_'):
         objects.append(Object(obj.find('type').text,
         obj.find('subtype').text,
-        obj.find('rect').text, frame.shape))
+        obj.find('rect').text, (frame.shape if not frame == None else [1, 1, 1])))
         # objects[len(objects) - 1].print_obj()
 
     return frame, objects
@@ -411,7 +421,6 @@ def GetLastFrameNumberInDir(dir):
 
 
 if __name__ == "__main__":
-
     output_dir = "/home/wildchlamydia/CarsVideo/train_sliced_subframes"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
