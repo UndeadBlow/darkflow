@@ -85,10 +85,10 @@ def drawAndSaveResults(self, boxes, im, save = True, raw_yolo_coords = True, out
 	h, w, _ = imgcv.shape
 	for b in boxes:
 		max_indx = np.argmax(b.probs)
-		print('max_indx', max_indx)
-		print('С', C)
+		#print('max_indx', max_indx)
+		#print('С', C)
 		label = 'object' * int(C < 2)
-		print('label', label)
+		#print('label', label)
 		label += labels[max_indx] * int(C > 1)
 
 		# See comment above function
