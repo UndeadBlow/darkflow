@@ -86,7 +86,7 @@ def drawAndSaveResults(self, boxes, im, save = True, raw_yolo_coords = True, out
 	for b in boxes:
 		max_indx = np.argmax(b.probs)
 		#print('max_indx', max_indx)
-		#print('С', C)
+		#print('C', C)
 		label = 'object' * int(C < 2)
 		#print('label', label)
 		label += labels[max_indx] * int(C > 1)
