@@ -1,0 +1,10 @@
+Sign
+Car
+TrafficLight
+BadCar
+Pedestrian
+Dir.Sign
+BiCyclist
+Bar.Sign
+Animal
+Barier

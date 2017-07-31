@@ -1,0 +1,296 @@
+================================================================================
+Input tree: '/media/undead/Work/reps/darkflow_orig'
+================================================================================
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/tf_upgrade.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/tf_upgrade.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/cfg/process.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/cfg/process.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/cfg/__init__.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/cfg/__init__.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/dark/connected.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/dark/connected.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/dark/convolution.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/dark/convolution.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/dark/darknet.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/dark/darknet.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/dark/darkop.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/dark/darkop.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/dark/layer.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/dark/layer.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/dark/__init__.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/dark/__init__.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/net/build.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/net/build.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/net/flow.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/net/flow.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/net/framework.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/net/framework.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/net/help.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/net/help.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/net/__init__.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/net/__init__.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/net/mnist/run.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/net/mnist/run.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/net/ops/baseop.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/net/ops/baseop.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/net/ops/convolution.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/net/ops/convolution.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/net/ops/simple.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/net/ops/simple.py'
+--------------------------------------------------------------------------------
+
+'/media/undead/Work/reps/darkflow_orig/net/ops/simple.py' Line 16
+--------------------------------------------------------------------------------
+
+Added keyword 'concat_dim' to reordered function 'tf.concat'
+Added keyword 'values' to reordered function 'tf.concat'
+
+    Old: 		self.out = tf.concat(3, routes_out)
+                                               
+    New: 		self.out = tf.concat(axis=3, values=routes_out)
+                                ~~~~~   ~~~~~~~            
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/net/ops/__init__.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/net/ops/__init__.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/net/vanilla/train.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/net/vanilla/train.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/net/vanilla/__init__.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/net/vanilla/__init__.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/net/yolo/data.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/net/yolo/data.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/net/yolo/misc.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/net/yolo/misc.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/net/yolo/test.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/net/yolo/test.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/net/yolo/train.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/net/yolo/train.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/net/yolo/__init__.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/net/yolo/__init__.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/net/yolov2/data.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/net/yolov2/data.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/net/yolov2/test.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/net/yolov2/test.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/net/yolov2/train.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/net/yolov2/train.py'
+--------------------------------------------------------------------------------
+
+'/media/undead/Work/reps/darkflow_orig/net/yolov2/train.py' Line 98
+--------------------------------------------------------------------------------
+
+Added keyword 'concat_dim' to reordered function 'tf.concat'
+Added keyword 'values' to reordered function 'tf.concat'
+
+    Old:     true = tf.concat(3, [_coord, tf.expand_dims(confs, 3), _probs ])
+                                                                              
+    New:     true = tf.concat(axis=3, values=[_coord, tf.expand_dims(confs, 3), _probs ])
+                              ~~~~~   ~~~~~~~                                             
+
+'/media/undead/Work/reps/darkflow_orig/net/yolov2/train.py' Line 99
+--------------------------------------------------------------------------------
+
+Added keyword 'concat_dim' to reordered function 'tf.concat'
+Added keyword 'values' to reordered function 'tf.concat'
+
+    Old:     wght = tf.concat(3, [cooid, tf.expand_dims(conid, 3), proid ])
+                                                                            
+    New:     wght = tf.concat(axis=3, values=[cooid, tf.expand_dims(conid, 3), proid ])
+                              ~~~~~   ~~~~~~~                                           
+
+'/media/undead/Work/reps/darkflow_orig/net/yolov2/train.py' Line 69
+--------------------------------------------------------------------------------
+
+Added keyword 'concat_dim' to reordered function 'tf.concat'
+Added keyword 'values' to reordered function 'tf.concat'
+
+    Old:     adjusted_net_out = tf.concat(3, [adjusted_coords_xy, adjusted_coords_wh, adjusted_c, adjusted_prob])
+                                                                                                                  
+    New:     adjusted_net_out = tf.concat(axis=3, values=[adjusted_coords_xy, adjusted_coords_wh, adjusted_c, adjusted_prob])
+                                          ~~~~~   ~~~~~~~                                                                     
+
+'/media/undead/Work/reps/darkflow_orig/net/yolov2/train.py' Line 92
+--------------------------------------------------------------------------------
+
+Added keyword 'concat_dim' to reordered function 'tf.concat'
+Added keyword 'values' to reordered function 'tf.concat'
+
+    Old:     weight_coo = tf.concat(3, 4 * [tf.expand_dims(confs, -1)])
+                                                                        
+    New:     weight_coo = tf.concat(axis=3, values=4 * [tf.expand_dims(confs, -1)])
+                                    ~~~~~   ~~~~~~~                                 
+
+'/media/undead/Work/reps/darkflow_orig/net/yolov2/train.py' Line 61
+--------------------------------------------------------------------------------
+
+Added keyword 'concat_dim' to reordered function 'tf.concat'
+Added keyword 'values' to reordered function 'tf.concat'
+
+    Old:     coords = tf.concat(3, [adjusted_coords_xy, adjusted_coords_wh])
+                                                                             
+    New:     coords = tf.concat(axis=3, values=[adjusted_coords_xy, adjusted_coords_wh])
+                                ~~~~~   ~~~~~~~                                          
+
+'/media/undead/Work/reps/darkflow_orig/net/yolov2/train.py' Line 94
+--------------------------------------------------------------------------------
+
+Added keyword 'concat_dim' to reordered function 'tf.concat'
+Added keyword 'values' to reordered function 'tf.concat'
+
+    Old:     weight_pro = tf.concat(3, C * [tf.expand_dims(confs, -1)])
+                                                                        
+    New:     weight_pro = tf.concat(axis=3, values=C * [tf.expand_dims(confs, -1)])
+                                    ~~~~~   ~~~~~~~                                 
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/net/yolov2/__init__.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/net/yolov2/__init__.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/utils/box.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/utils/box.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/utils/darknet_dataset_loader.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/utils/darknet_dataset_loader.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/utils/im_transform.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/utils/im_transform.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/utils/loader.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/utils/loader.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/utils/pascal_voc_clean_xml.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/utils/pascal_voc_clean_xml.py'
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+Processing file '/media/undead/Work/reps/darkflow_orig/utils/__init__.py'
+ outputting to '/media/undead/Work/reps/darkflow_orig_tf1/utils/__init__.py'
+--------------------------------------------------------------------------------
+
+

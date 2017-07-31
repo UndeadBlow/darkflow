@@ -1,0 +1,9 @@
+WarningSign
+ProhibSign
+IndicatorSignRound
+IndicatorSignRect
+RoadNumberOrName
+RoadIndicatorSign
+StreetLight
+ArrowLight
+InterSpotSpeed
