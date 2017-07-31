@@ -380,7 +380,7 @@ def getObjectsAndFrame(xml_filename):
         except:
             return None, objects
 
-        cap.open(video_filename)
+        cap.open(video_filename, cv2.CAP_FFMPEG)
         if not (cap.isOpened()):
             print('Can\'t open file', video_filename)
             frame = None
