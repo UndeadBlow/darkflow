@@ -369,7 +369,7 @@ def getObjectsAndFrame(xml_filename):
 
     files = GetAllFilesList(possible_video_filename[: possible_video_filename.rfind('/')])
     # If possible to find correlated video file - then read frame from it
-    video_filenames = list([file for file in files if isVideofile(file) and possible_video_filename in file])
+    video_filenames = list([file for file in files if isVideofile(file) and possible_video_filename in file])[0]
     video_filename = video_filenames if len(video_filenames) else None
 
     if not video_filename == None:
