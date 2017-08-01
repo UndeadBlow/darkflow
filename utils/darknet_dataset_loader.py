@@ -120,7 +120,7 @@ def navmii_data_loader(path, classes_names, FLAGS, classes_to_load = []):
 
             frame, objects = slicer.getObjectsAndFrame(file)
 
-            if frame == None:
+            if not frame.any():
                 print(file, file.replace('_o.xml', '.png'))
                 print('None frame')
                 continue
@@ -181,7 +181,7 @@ def navmii_data_loader(path, classes_names, FLAGS, classes_to_load = []):
                 dumps.append([filename + ':' + frame_number, [frame.shape[1], frame.shape[0], dump_objects]])
             else:
                 dumps.append([file.replace('_o.xml', '.png'), [frame.shape[1], frame.shape[0], dump_objects]])
-                
+
     print(len(dumps))
     return dumps
 
