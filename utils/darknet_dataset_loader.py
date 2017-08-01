@@ -77,22 +77,22 @@ def navmii_data_loader(path, classes_names, FLAGS, classes_to_load = []):
 
                     w = obj.rect.w
 
-                    if w < 25:
+                    if w < FLAGS.min_width:
                         continue
                     if w + x > (frame.shape[1]):
                         w -= (w + x - frame.shape[1])
-                    if w < 25:
+                    if w < FLAGS.min_width:
                         continue
                     if w > (frame.shape[0] * 0.3):
                         continue
 
                     h = obj.rect.h
 
-                    if h < 25:
+                    if h < FLAGS.min_height:
                         continue
                     if h + y > (frame.shape[0]):
                         h -= (h + y - frame.shape[0])
-                    if h < 25:
+                    if h < FLAGS.min_height:
                         continue
                     if h > (frame.shape[1] * 0.3):
                         continue
@@ -112,17 +112,18 @@ def navmii_data_loader(path, classes_names, FLAGS, classes_to_load = []):
     else:
         for file in files:
 
-            if slicer.isVideofile(file):
-                video_filename = file[: file.rfind('/')]
+            video_filename = file[: file.rfind('/')]
+            t = list([f for f in all_videofiles if video_filename in f])
+            video_filename = t[0] if len(t) > 0 else file
+
+            if slicer.isVideofile(video_filename):
                 frame_number = file[file.rfind('/'): ]
                 frame_number = frame_number[frame_number.find('f') + 1: frame_number.find('_o')]
-                filename = ([f for f in all_videofiles if video_filename in f])[0]
 
             frame, objects = slicer.getObjectsAndFrame(file)
 
             if not frame.any():
-                print(file, file.replace('_o.xml', '.png'))
-                print('None frame')
+                print(file, "Null frame")
                 continue
 
             dump_objects = []
@@ -149,22 +150,22 @@ def navmii_data_loader(path, classes_names, FLAGS, classes_to_load = []):
 
                 w = obj.rect.w
 
-                if w < 25:
+                if w < FLAGS.min_width:
                     continue
                 if w + x > (frame.shape[1]):
                     w -= (w + x - frame.shape[1])
-                if w < 25:
+                if w < FLAGS.min_width:
                     continue
                 if w > (frame.shape[0] * 0.3):
                     continue
 
                 h = obj.rect.h
 
-                if h < 25:
+                if h < FLAGS.min_height:
                     continue
                 if h + y > (frame.shape[0]):
                     h -= (h + y - frame.shape[0])
-                if h < 25:
+                if h < FLAGS.min_height:
                     continue
                 if h > (frame.shape[1] * 0.3):
                     continue
@@ -177,12 +178,11 @@ def navmii_data_loader(path, classes_names, FLAGS, classes_to_load = []):
             if dump_objects == []:
                 continue
 
-            if slicer.isVideofile(file):
-                dumps.append([filename + ':' + frame_number, [frame.shape[1], frame.shape[0], dump_objects]])
+            if slicer.isVideofile(video_filename):
+                dumps.append([video_filename + ':' + frame_number, [frame.shape[1], frame.shape[0], dump_objects]])
             else:
                 dumps.append([file.replace('_o.xml', '.png'), [frame.shape[1], frame.shape[0], dump_objects]])
 
-    print(len(dumps))
     return dumps
 
 def darknet_data_loader(path, classes_names, classes_to_load = []):

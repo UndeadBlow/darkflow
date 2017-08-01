@@ -31,6 +31,9 @@ def _batch(self, chunk):
     if self.FLAGS.darknet_dataset:
         path = os.path.join(self.FLAGS.darknet_dataset.replace('.txt', ''), jpg)
     if self.FLAGS.navmii_dataset:
+        # print('navmii_dataset')
+        # print(jpg)
+        # print(allobj)
         path = os.path.join(self.FLAGS.navmii_dataset, jpg)
     img = self.preprocess(path, allobj)
 

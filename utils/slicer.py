@@ -362,15 +362,14 @@ def getVideoLength(video_filename):
 def getObjectsAndFrame(xml_filename):
     tree = ET.parse(xml_filename)
     root = tree.getroot()
-
     cap = cv2.VideoCapture()
 
     possible_video_filename = xml_filename[: xml_filename.rfind('/')]
 
     files = GetAllFilesList(possible_video_filename[: possible_video_filename.rfind('/')])
     # If possible to find correlated video file - then read frame from it
-    video_filenames = list([file for file in files if isVideofile(file) and possible_video_filename in file])[0]
-    video_filename = video_filenames if len(video_filenames) else None
+    video_filenames = list([file for file in files if isVideofile(file) and possible_video_filename in file])
+    video_filename = video_filenames[0] if len(video_filenames) else None
 
     if not video_filename == None:
         frame_number = xml_filename[xml_filename.rfind('/'): ]
@@ -380,7 +379,6 @@ def getObjectsAndFrame(xml_filename):
         except:
             return None, objects
 
-        print('opening filename: ', video_filename)
         cap.open(video_filename)
         if not (cap.isOpened()):
             print('Can\'t open file', video_filename)

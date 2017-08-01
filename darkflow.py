@@ -37,6 +37,8 @@ flags.DEFINE_integer("epoch", 1000, "number of epoch")
 flags.DEFINE_integer("save", 2000, "save checkpoint every ? training examples")
 flags.DEFINE_string("demo", '', "demo on webcam")
 flags.DEFINE_boolean("profile", False, "profile")
+flags.DEFINE_integer("min_width", 25, "Minimum object width on original image that can be loaded")
+flags.DEFINE_integer("min_height", 25, "Minimum object height on original image that can be loaded")
 FLAGS = flags.FLAGS
 
 # make sure all necessary dirs exist

@@ -22,6 +22,7 @@ def preprocess(self, im, allobj = None):
 	using scale, translation, flipping and recolor. The accompanied
 	parsed annotation (allobj) will also be modified accordingly.
 	"""
+	print('Image: ', im)
 	if isinstance(im, np.ndarray):
 		image = im
 	elif (slicer.isVideofile(im)):
