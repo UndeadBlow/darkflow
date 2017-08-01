@@ -401,7 +401,7 @@ def getObjectsAndFrame(xml_filename):
     for obj in root.findall('Objects')[0].findall('_'):
         objects.append(Object(obj.find('type').text,
         obj.find('subtype').text,
-        obj.find('rect').text, (frame.shape if not frame == None else [1, 1, 1])))
+        obj.find('rect').text, (frame.shape if frame.any() else [1, 1, 1])))
         # objects[len(objects) - 1].print_obj()
 
     return frame, objects
