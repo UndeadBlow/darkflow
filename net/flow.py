@@ -404,16 +404,16 @@ def predictList(self, images_names, output_names = []):
 
             if not output_names:
                 if self.FLAGS.save_xml:
-                    print('Saving XML to ', xml_filename)
                     xml_filename = os.path.join(inp_path, all_inp[i]).replace('.png', '_o.xml')
+                    print('Saving XML to ', xml_filename)
                     saveFrameToXML(boxes, classes, xml_filename)
                 if self.FLAGS.save_image:
                     print('Saving PNG to ', os.path.join(inp_path, all_inp[i]))
                     self.framework.drawAndSaveResults(boxes, os.path.join(inp_path, all_inp[i]))
             else:
                 if self.FLAGS.save_xml:
-                    print('Saving XML to ', xml_filename)
                     xml_filename = output_names[i].replace('.png', '_o.xml')
+                    print('Saving XML to ', xml_filename)
                     saveFrameToXML(boxes, classes, xml_filename)
                 if self.FLAGS.save_image:
                     print('Saving PNG to ', output_names[index_for_names])
