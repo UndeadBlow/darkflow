@@ -190,6 +190,7 @@ def processBoxes(self, boxes, max_iou = 0.25):
 def saveFrameToXML(boxes, classes, xml_filename):
     xml = serial.points_to_xml(boxes, classes)
     if xml == '':
+        print('empty xml')
         return
     file = open(xml_filename, 'w')
     file.write(xml)
