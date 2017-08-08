@@ -17,6 +17,8 @@ def add_to_element(el, box):
 
 def points_to_xml(boxes, classes, skipped = False):
    # of one frame
+   print('In points_to_xml, boxes len: ', len(boxes))
+   print('Classes: ', classes)
    ocv_storage = etree.Element('opencv_storage')
    xml = etree.ElementTree(ocv_storage)
    skip = etree.SubElement(ocv_storage
