@@ -29,7 +29,8 @@ def points_to_xml(boxes, classes, skipped = False):
 
    added = 0
    for box in boxes:
-       if box.class_num in classes:
+       # If class num is in classes or class name
+       if box.class_num in classes or classes[box.class_num] in classes:
            el = etree.SubElement(objs, '_')
            add_to_element(el, box)
            added += 1
