@@ -404,20 +404,21 @@ def predictList(self, images_names, output_names = []):
 
             if not output_names:
                 if self.FLAGS.save_xml:
+                    print('Saving XML to ', xml_filename)
                     xml_filename = os.path.join(inp_path, all_inp[i]).replace('.png', '_o.xml')
                     saveFrameToXML(boxes, classes, xml_filename)
-                self.framework.drawAndSaveResults(boxes, os.path.join(inp_path, all_inp[i]))
+                if self.FLAGS.save_image:
+                    print('Saving PNG to ', os.path.join(inp_path, all_inp[i]))
+                    self.framework.drawAndSaveResults(boxes, os.path.join(inp_path, all_inp[i]))
             else:
                 if self.FLAGS.save_xml:
+                    print('Saving XML to ', xml_filename)
                     xml_filename = output_names[i].replace('.png', '_o.xml')
                     saveFrameToXML(boxes, classes, xml_filename)
-                self.framework.drawAndSaveResults(boxes, im = all_inp[i], out_name = output_names[index_for_names])
+                if self.FLAGS.save_image:
+                    print('Saving PNG to ', output_names[index_for_names])
+                    self.framework.drawAndSaveResults(boxes, im = all_inp[i], out_name = output_names[index_for_names])
                 index_for_names += 1
-
-        stop = time.time(); last = stop - start
-
-        self.say('Total time = {}s / {} inps = {} ips'.format(
-            last, len(inp_feed), len(inp_feed) / last))
 
 def predict(self):
     inp_path = self.FLAGS.test
