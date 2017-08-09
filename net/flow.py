@@ -413,7 +413,7 @@ def predictList(self, images_names, output_names = []):
                     self.framework.drawAndSaveResults(boxes, os.path.join(inp_path, all_inp[i]))
             else:
                 if self.FLAGS.save_xml:
-                    xml_filename = output_names[i].replace('.png', '_o.xml')
+                    xml_filename = output_names[index_for_names].replace('.png', '_o.xml')
                     print('Saving XML to ', xml_filename)
                     saveFrameToXML(boxes, classes, xml_filename)
                 if self.FLAGS.save_image:
